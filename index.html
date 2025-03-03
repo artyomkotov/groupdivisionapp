@@ -15,6 +15,7 @@
         </header>
 
         <div class="app-container">
+            <!-- Input Section -->
             <div class="card input-section">
                 <h2>Input Names</h2>
                 <div class="tabs">
@@ -40,6 +41,7 @@
                 </div>
             </div>
 
+            <!-- Settings Section -->
             <div class="card settings-section">
                 <h2>Settings</h2>
                 <div class="setting-group">
@@ -64,16 +66,18 @@
                 <button id="generate-groups" class="btn primary"><i class="fas fa-random"></i> Generate Groups</button>
             </div>
 
+            <!-- Results Section - Now full width below -->
             <div class="card results-section">
-                <h2>Generated Groups</h2>
+                <div class="results-header">
+                    <h2>Generated Groups</h2>
+                    <div class="actions">
+                        <button id="download-groups" class="btn secondary" disabled><i class="fas fa-download"></i> Download</button>
+                        <button id="clear-groups" class="btn danger" disabled><i class="fas fa-trash"></i> Clear</button>
+                    </div>
+                </div>
                 <div id="groups-container">
                     <!-- Groups will be displayed here -->
                     <p class="empty-state">Generated groups will appear here</p>
-                </div>
-                
-                <div class="actions">
-                    <button id="download-groups" class="btn secondary" disabled><i class="fas fa-download"></i> Download</button>
-                    <button id="clear-groups" class="btn danger" disabled><i class="fas fa-trash"></i> Clear</button>
                 </div>
             </div>
         </div>

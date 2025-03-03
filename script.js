@@ -79,9 +79,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (groupsContainer.querySelector('.empty-state')) {
             groupsContainer.innerHTML = '';
         }
-        
-        // Message for the user to implement the functionality
-        groupsContainer.innerHTML = '<p class="empty-state">You need to implement the group generation functionality!</p>';
+
+        // Create example groups for UI demonstration
+        // You will replace this with your actual group generation code
+        createExampleGroups();
     });
     
     // Updates the exception dropdowns when names are added
@@ -90,4 +91,163 @@ document.addEventListener('DOMContentLoaded', function() {
         // You'll implement the name addition and validation logic
         console.log('Add names button clicked - functionality to be implemented');
     });
+
+    // Create example groups for demonstration (you'll replace this with actual functionality)
+    function createExampleGroups() {
+        groupsContainer.innerHTML = '';
+        
+        // Example groups - you will replace this with your actual group generation logic
+        const exampleGroups = [
+            { name: "Group 1", members: ["Alice", "Bob", "Charlie", "David"] },
+            { name: "Group 2", members: ["Eva", "Frank", "Grace", "Henry"] },
+            { name: "Group 3", members: ["Ivy", "Jack", "Kate", "Leo"] },
+            { name: "Group 4", members: ["Maya", "Noah", "Olivia", "Paul"] },
+        ];
+        
+        exampleGroups.forEach((group, index) => {
+            const groupCard = document.createElement('div');
+            groupCard.className = 'group-card';
+            groupCard.dataset.groupId = index;
+            
+            const groupHeader = document.createElement('h3');
+            groupHeader.textContent = group.name;
+            const memberCount = document.createElement('span');
+            memberCount.className = 'group-count';
+            memberCount.textContent = group.members.length;
+            groupHeader.appendChild(memberCount);
+            
+            const memberList = document.createElement('ul');
+            memberList.className = 'member-list';
+            
+            group.members.forEach(member => {
+                const memberItem = document.createElement('li');
+                memberItem.textContent = member;
+                memberItem.setAttribute('draggable', true);
+                memberItem.dataset.member = member;
+                
+                // Add drag event listeners
+                memberItem.addEventListener('dragstart', handleDragStart);
+                memberItem.addEventListener('dragend', handleDragEnd);
+                
+                memberList.appendChild(memberItem);
+            });
+            
+            groupCard.appendChild(groupHeader);
+            groupCard.appendChild(memberList);
+            
+            // Add drop event listeners to the group
+            groupCard.addEventListener('dragover', handleDragOver);
+            groupCard.addEventListener('dragleave', handleDragLeave);
+            groupCard.addEventListener('drop', handleDrop);
+            
+            groupsContainer.appendChild(groupCard);
+        });
+
+        // Add an empty group placeholder
+        const emptyGroup = document.createElement('div');
+        emptyGroup.className = 'group-placeholder';
+        emptyGroup.textContent = 'Drag members here to create a new group';
+        emptyGroup.addEventListener('dragover', handleDragOver);
+        emptyGroup.addEventListener('dragleave', handleDragLeave);
+        emptyGroup.addEventListener('drop', handleDropOnEmpty);
+        groupsContainer.appendChild(emptyGroup);
+    }
+
+    // Drag and Drop functionality
+    let draggedItem = null;
+    let sourceGroupId = null;
+
+    function handleDragStart(e) {
+        draggedItem = e.target;
+        sourceGroupId = e.target.closest('.group-card').dataset.groupId;
+        setTimeout(() => {
+            e.target.classList.add('dragging');
+        }, 0);
+    }
+
+    function handleDragEnd(e) {
+        e.target.classList.remove('dragging');
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        this.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+        this.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        this.classList.remove('drag-over');
+        
+        if (draggedItem) {
+            const targetGroup = this;
+            const targetGroupId = targetGroup.dataset.groupId;
+            
+            // Only move if dropping into a different group
+            if (sourceGroupId !== targetGroupId) {
+                // Update the source group's count
+                const sourceGroup = document.querySelector(`.group-card[data-group-id="${sourceGroupId}"]`);
+                const sourceGroupCount = sourceGroup.querySelector('.group-count');
+                sourceGroupCount.textContent = parseInt(sourceGroupCount.textContent) - 1;
+                
+                // Update the target group's count
+                const targetGroupCount = targetGroup.querySelector('.group-count');
+                targetGroupCount.textContent = parseInt(targetGroupCount.textContent) + 1;
+                
+                // Move the item
+                targetGroup.querySelector('.member-list').appendChild(draggedItem);
+            }
+            
+            draggedItem = null;
+            sourceGroupId = null;
+        }
+    }
+
+    function handleDropOnEmpty(e) {
+        e.preventDefault();
+        this.classList.remove('drag-over');
+        
+        if (draggedItem) {
+            // Create a new group
+            const newGroupId = document.querySelectorAll('.group-card').length;
+            const newGroup = document.createElement('div');
+            newGroup.className = 'group-card';
+            newGroup.dataset.groupId = newGroupId;
+            
+            const groupHeader = document.createElement('h3');
+            groupHeader.textContent = `New Group`;
+            const memberCount = document.createElement('span');
+            memberCount.className = 'group-count';
+            memberCount.textContent = '1';
+            groupHeader.appendChild(memberCount);
+            
+            const memberList = document.createElement('ul');
+            memberList.className = 'member-list';
+            
+            // Update the source group's count
+            const sourceGroup = document.querySelector(`.group-card[data-group-id="${sourceGroupId}"]`);
+            const sourceGroupCount = sourceGroup.querySelector('.group-count');
+            sourceGroupCount.textContent = parseInt(sourceGroupCount.textContent) - 1;
+            
+            // Move the item
+            memberList.appendChild(draggedItem);
+            
+            newGroup.appendChild(groupHeader);
+            newGroup.appendChild(memberList);
+            
+            // Add drop event listeners to the new group
+            newGroup.addEventListener('dragover', handleDragOver);
+            newGroup.addEventListener('dragleave', handleDragLeave);
+            newGroup.addEventListener('drop', handleDrop);
+            
+            // Insert before the placeholder
+            groupsContainer.insertBefore(newGroup, this);
+            
+            draggedItem = null;
+            sourceGroupId = null;
+        }
+    }
 });

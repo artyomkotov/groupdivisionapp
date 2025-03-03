@@ -49,20 +49,17 @@ header h1 {
     .app-container {
         grid-template-columns: repeat(2, 1fr);
     }
-    
-    .results-section {
-        grid-column: 1 / span 2;
-    }
 }
 
 @media (min-width: 992px) {
     .app-container {
         grid-template-columns: repeat(3, 1fr);
     }
-    
-    .results-section {
-        grid-column: auto;
-    }
+}
+
+.results-section {
+    grid-column: 1 / -1; /* Make results section full width */
+    margin-top: 20px;
 }
 
 .card {
@@ -255,6 +252,9 @@ input[type="number"] {
     display: grid;
     gap: 15px;
     margin: 20px 0;
+    max-height: 600px; /* Add max height for large number of groups */
+    overflow-y: auto; /* Add scrolling for many groups */
+    padding: 10px;
 }
 
 @media (min-width: 576px) {
@@ -263,17 +263,45 @@ input[type="number"] {
     }
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
     #groups-container {
         grid-template-columns: repeat(3, 1fr);
     }
+}
+
+@media (min-width: 1200px) {
+    #groups-container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Add styles for the group results header */
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.results-header h2 {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
 }
 
 .group-card {
     border: 1px solid var(--light-gray);
     border-radius: var(--border-radius);
     padding: 15px;
-    background-color: var(--light-gray);
+    background-color: white; /* Changed from light gray for better contrast */
+    min-height: 150px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.group-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
 .group-card h3 {
@@ -282,7 +310,43 @@ input[type="number"] {
 }
 
 .group-card ul {
-    list-style-position: inside;
+    list-style-type: none;
+}
+
+.group-card li {
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border-radius: var(--border-radius);
+    background-color: white;
+    border: 1px solid #ddd;
+    cursor: grab;
+    transition: var(--transition);
+    position: relative;
+}
+
+.group-card li:hover {
+    background-color: #f9f9f9;
+    box-shadow: var(--shadow);
+}
+
+.group-card li.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.group-card.drag-over {
+    border: 2px dashed var(--primary-color);
+    background-color: rgba(52, 152, 219, 0.1);
+}
+
+.group-count {
+    font-size: 0.8rem;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 8px;
+    vertical-align: middle;
 }
 
 .actions {
@@ -296,6 +360,18 @@ input[type="number"] {
     color: var(--mid-gray);
     font-style: italic;
     padding: 20px;
+}
+
+.group-placeholder {
+    border: 2px dashed var(--mid-gray);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    text-align: center;
+    color: var(--mid-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 150px;
 }
 
 /* Footer */
