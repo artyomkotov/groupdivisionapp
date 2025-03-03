@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
         clearGroupsBtn.disabled = true;
     });
     
-    // Generate groups button - main functionality
+    // Update the generate groups functionality with validation
     generateGroupsBtn.addEventListener('click', function() {
         if (allNames.length < 2) {
             showNotification('Please add at least 2 names', 'error');
@@ -327,8 +327,47 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Get settings
         const groupSize = parseInt(groupSizeInput.value);
+        const totalPeople = allNames.length;
+        
+        // Validate group size
+        if (groupSize > totalPeople) {
+            // Calculate appropriate max group size
+            const maxPossibleGroups = Math.floor(totalPeople / 2);
+            const suggestedGroupSize = Math.ceil(totalPeople / maxPossibleGroups);
+            
+            // Update the UI with a maximum valid group size
+            groupSizeInput.value = suggestedGroupSize;
+            groupSizeDisplay.textContent = suggestedGroupSize;
+            if (suggestedGroupSize <= 10) {
+                groupSizeSlider.value = suggestedGroupSize;
+            }
+            
+            showNotification(`Cannot create groups of ${groupSize} with only ${totalPeople} people. Group size adjusted to ${suggestedGroupSize}.`, 'warning');
+            return;
+        }
+        
+        // Additional validation: ensure we can create at least 2 groups if there are enough people
+        if (groupSize === totalPeople && totalPeople > 3) {
+            const suggestedGroupSize = Math.ceil(totalPeople / 2);
+            groupSizeInput.value = suggestedGroupSize;
+            groupSizeDisplay.textContent = suggestedGroupSize;
+            if (suggestedGroupSize <= 10) {
+                groupSizeSlider.value = suggestedGroupSize;
+            }
+            
+            showNotification(`Creating one group with all people defeats the purpose. Group size adjusted to ${suggestedGroupSize} to create multiple groups.`, 'warning');
+            return;
+        }
+        
         const exceptions = getExceptionPairs();
         const togetherPairs = getTogetherPairs();
+        
+        // Validate "must be together" constraints
+        const togetherValidation = validateTogetherConstraints(allNames, togetherPairs, groupSize);
+        if (!togetherValidation.valid) {
+            showNotification(togetherValidation.message, 'error');
+            return;
+        }
         
         // Generate groups based on settings
         const groups = generateGroups(allNames, groupSize, exceptions, togetherPairs);
@@ -534,14 +573,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Create initial groups
     function createInitialGroups(processedNames, groupSize) {
         const groups = [];
-        let currentGroup = [];
         
         // Calculate how many groups we need
         const totalMembers = processedNames.reduce((count, name) => {
             return count + (name.includes('|') ? name.split('|').length : 1);
         }, 0);
         
-        const numberOfGroups = Math.ceil(totalMembers / groupSize);
+        // Calculate the number of groups needed
+        let numberOfGroups = Math.floor(totalMembers / groupSize);
+        if (totalMembers % groupSize !== 0) {
+            numberOfGroups++; // Add an extra group for remaining members
+        }
         
         // If there's only one group needed, return all names in a single group
         if (numberOfGroups <= 1) {
@@ -551,9 +593,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }];
         }
         
-        // Create groups with approximately equal sizes
-        const idealGroupSize = Math.ceil(processedNames.length / numberOfGroups);
-        
+        // Create empty groups
         for (let i = 0; i < numberOfGroups; i++) {
             groups.push({
                 name: `Group ${i + 1}`,
@@ -561,12 +601,37 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        // Assign names to groups
-        let groupIndex = 0;
-        processedNames.forEach(name => {
-            groups[groupIndex].members.push(name);
-            groupIndex = (groupIndex + 1) % groups.length;
-        });
+        // Track the effective size of each group, considering that combined names count as multiple people
+        const effectiveGroupSizes = Array(numberOfGroups).fill(0);
+        
+        // First pass: assign combined names first to ensure they don't split across groups
+        const combinedNames = processedNames.filter(name => name.includes('|'));
+        const singleNames = processedNames.filter(name => !name.includes('|'));
+        
+        // Sort combined names by size (descending) to place larger combinations first
+        combinedNames.sort((a, b) => b.split('|').length - a.split('|').length);
+        
+        // Assign combined names
+        for (const name of combinedNames) {
+            const memberCount = name.split('|').length;
+            // Find the group with the least number of effective members
+            const targetGroupIndex = effectiveGroupSizes.indexOf(Math.min(...effectiveGroupSizes));
+            
+            groups[targetGroupIndex].members.push(name);
+            effectiveGroupSizes[targetGroupIndex] += memberCount;
+        }
+        
+        // Shuffle single names for randomness
+        const shuffledNames = shuffleArray(singleNames);
+        
+        // Second pass: distribute the single names evenly
+        for (const name of shuffledNames) {
+            // Find the group with the least number of effective members
+            const targetGroupIndex = effectiveGroupSizes.indexOf(Math.min(...effectiveGroupSizes));
+            
+            groups[targetGroupIndex].members.push(name);
+            effectiveGroupSizes[targetGroupIndex] += 1;
+        }
         
         return groups;
     }
@@ -881,6 +946,58 @@ document.addEventListener('DOMContentLoaded', function() {
             draggedItem = null;
             sourceGroupId = null;
         }
+    }
+    
+    // Add a new function to validate "must be together" constraints
+    function validateTogetherConstraints(names, togetherPairs, groupSize) {
+        if (togetherPairs.length === 0) {
+            return { valid: true };
+        }
+        
+        // Process together pairs to find the largest must-be-together group
+        const graph = {};
+        names.forEach(name => {
+            graph[name] = [];
+        });
+        
+        togetherPairs.forEach(([name1, name2]) => {
+            if (graph[name1]) graph[name1].push(name2);
+            if (graph[name2]) graph[name2].push(name1);
+        });
+        
+        // Find connected components (groups that must be together)
+        const visited = new Set();
+        let largestComponentSize = 0;
+        
+        function dfs(node, component) {
+            visited.add(node);
+            component.push(node);
+            
+            for (const neighbor of graph[node] || []) {
+                if (!visited.has(neighbor)) {
+                    dfs(neighbor, component);
+                }
+            }
+        }
+        
+        for (const name of names) {
+            if (!visited.has(name)) {
+                const component = [];
+                dfs(name, component);
+                
+                largestComponentSize = Math.max(largestComponentSize, component.length);
+            }
+        }
+        
+        // If the largest must-be-together group is larger than the group size, it's invalid
+        if (largestComponentSize > groupSize) {
+            return {
+                valid: false,
+                message: `You have specified that ${largestComponentSize} people must be together, but the group size is only ${groupSize}. Please increase the group size or remove some "must be together" constraints.`
+            };
+        }
+        
+        return { valid: true };
     }
     
     // Initialize the app
