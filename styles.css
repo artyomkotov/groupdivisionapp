@@ -127,7 +127,64 @@ input[type="number"] {
     padding: 8px 12px;
     border: 1px solid var(--mid-gray);
     border-radius: var(--border-radius);
-    width: 70px;
+    width: 60px;
+    text-align: center;
+}
+
+/* Slider styling */
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    background: var(--light-gray);
+    outline: none;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.slider::-webkit-slider-thumb:hover {
+    background: #2980b9;
+    transform: scale(1.1);
+}
+
+.slider::-moz-range-thumb:hover {
+    background: #2980b9;
+    transform: scale(1.1);
+}
+
+#group-size-display {
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-left: 5px;
+    font-size: 1.1em;
 }
 
 /* File upload */
@@ -224,27 +281,38 @@ input[type="number"] {
     font-weight: 600;
 }
 
-/* Exceptions */
-.exception-pair {
+/* Exceptions & Together Pairs */
+.exception-pair, .together-pair {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
     gap: 10px;
 }
 
-.exception-pair select {
+.exception-pair select, .together-pair select {
     padding: 8px;
     border: 1px solid var(--mid-gray);
     border-radius: var(--border-radius);
     flex-grow: 1;
 }
 
-.remove-exception {
+.remove-exception, .remove-together {
     background: none;
     border: none;
     color: var(--danger-color);
     cursor: pointer;
     font-size: 16px;
+}
+
+/* Visual distinction between exception and together pairs */
+.exception-pair {
+    border-left: 3px solid var(--danger-color);
+    padding-left: 8px;
+}
+
+.together-pair {
+    border-left: 3px solid var(--secondary-color);
+    padding-left: 8px;
 }
 
 /* Results */

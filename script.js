@@ -4,12 +4,37 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('file-input');
     const addNamesBtn = document.getElementById('add-names');
     const groupSizeInput = document.getElementById('group-size');
+    const groupSizeSlider = document.getElementById('group-size-slider');
+    const groupSizeDisplay = document.getElementById('group-size-display');
     const addExceptionBtn = document.getElementById('add-exception');
+    const addTogetherBtn = document.getElementById('add-together');
     const generateGroupsBtn = document.getElementById('generate-groups');
     const downloadGroupsBtn = document.getElementById('download-groups');
     const clearGroupsBtn = document.getElementById('clear-groups');
     const exceptionsContainer = document.getElementById('exceptions-container');
+    const togetherContainer = document.getElementById('together-container');
     const groupsContainer = document.getElementById('groups-container');
+    
+    // Sync slider and number input
+    groupSizeSlider.addEventListener('input', function() {
+        const value = this.value;
+        groupSizeInput.value = value;
+        groupSizeDisplay.textContent = value;
+    });
+    
+    groupSizeInput.addEventListener('input', function() {
+        let value = parseInt(this.value);
+        // Ensure value is within range
+        if (value < 2) value = 2;
+        if (value > 20) value = 20;
+        
+        // Update slider if within its range
+        if (value <= 10) {
+            groupSizeSlider.value = value;
+        }
+        
+        groupSizeDisplay.textContent = value;
+    });
     
     // Tab functionality
     const tabBtns = document.querySelectorAll('.tab-btn');
@@ -53,12 +78,74 @@ document.addEventListener('DOMContentLoaded', function() {
         exceptionsContainer.appendChild(exceptionPair);
     });
     
+    // Add "must be together" UI
+    addTogetherBtn.addEventListener('click', function() {
+        const togetherPair = document.querySelector('.together-pair').cloneNode(true);
+        const removeBtn = togetherPair.querySelector('.remove-together');
+        
+        // Reset selections in the cloned pair
+        togetherPair.querySelectorAll('select').forEach(select => {
+            select.value = '';
+        });
+        
+        // Add remove functionality
+        removeBtn.addEventListener('click', function() {
+            togetherPair.remove();
+        });
+        
+        togetherContainer.appendChild(togetherPair);
+    });
+    
     // Remove exception handler for initial pair
     document.querySelector('.remove-exception').addEventListener('click', function() {
         if (exceptionsContainer.querySelectorAll('.exception-pair').length > 1) {
             this.closest('.exception-pair').remove();
         }
     });
+    
+    // Remove together handler for initial pair
+    document.querySelector('.remove-together').addEventListener('click', function() {
+        if (togetherContainer.querySelectorAll('.together-pair').length > 1) {
+            this.closest('.together-pair').remove();
+        }
+    });
+    
+    // Update name dropdowns for both exceptions and together pairs
+    function updateNameDropdowns(names) {
+        // Function to update a single select element
+        function updateSelect(select, names, currentValue = '') {
+            // Save current selection if there is one
+            const currentSelection = currentValue || select.value;
+            
+            // Clear options except the placeholder
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+            
+            // Add new options
+            names.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                select.appendChild(option);
+            });
+            
+            // Restore selection if it still exists
+            if (currentSelection && names.includes(currentSelection)) {
+                select.value = currentSelection;
+            }
+        }
+        
+        // Update all exception selects
+        document.querySelectorAll('.exception-name1, .exception-name2').forEach(select => {
+            updateSelect(select, names);
+        });
+        
+        // Update all together selects
+        document.querySelectorAll('.together-name1, .together-name2').forEach(select => {
+            updateSelect(select, names);
+        });
+    }
     
     // Clear groups
     clearGroupsBtn.addEventListener('click', function() {
@@ -88,7 +175,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Updates the exception dropdowns when names are added
     // This is stubbed since you'll implement the actual names management
     addNamesBtn.addEventListener('click', function() {
-        // You'll implement the name addition and validation logic
+        // This is just a placeholder for demonstration
+        // In your implementation, you'll extract the actual names from the input
+        const demoNames = ['Alice', 'Bob', 'Charlie', 'David', 'Eva', 'Frank', 'Grace'];
+        updateNameDropdowns(demoNames);
         console.log('Add names button clicked - functionality to be implemented');
     });
 
@@ -249,5 +339,31 @@ document.addEventListener('DOMContentLoaded', function() {
             draggedItem = null;
             sourceGroupId = null;
         }
+    }
+
+    // Helper function to get "must be together" pairs
+    function getTogetherPairs() {
+        const pairs = [];
+        document.querySelectorAll('.together-pair').forEach(pair => {
+            const name1 = pair.querySelector('.together-name1').value;
+            const name2 = pair.querySelector('.together-name2').value;
+            if (name1 && name2 && name1 !== name2) {
+                pairs.push([name1, name2]);
+            }
+        });
+        return pairs;
+    }
+    
+    // Helper function to get exception pairs
+    function getExceptionPairs() {
+        const pairs = [];
+        document.querySelectorAll('.exception-pair').forEach(pair => {
+            const name1 = pair.querySelector('.exception-name1').value;
+            const name2 = pair.querySelector('.exception-name2').value;
+            if (name1 && name2 && name1 !== name2) {
+                pairs.push([name1, name2]);
+            }
+        });
+        return pairs;
     }
 });
