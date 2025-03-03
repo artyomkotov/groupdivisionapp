@@ -8,6 +8,7 @@ GroupDivisionApp is a tool developed for Group Organization AS to efficiently or
 - Generating balanced groups of customizable size
 - Managing compatibility between participants:
   - Preventing specific people from being placed in the same group
+  - Ensuring certain people are always grouped together
 - Adjusting groups after initial generation by swapping participants
 - Exporting the final group arrangement to a new document in a clear format
 
