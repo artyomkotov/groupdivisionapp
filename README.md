@@ -1,8 +1,8 @@
-# groupdivisionapp
+# GroupDivisionApp
 
 ## Description
 
-GroupDivisjonApp is a tool developed for Group Organization AS to efficiently organize people into groups. The application solves the challenge of creating optimal group divisions by providing the following capabilities:
+GroupDivisionApp is a tool developed for Group Organization AS to efficiently organize people into groups. The application solves the challenge of creating optimal group divisions by providing the following capabilities:
 
 - Reading participant names from an input document
 - Generating balanced groups of customizable size
