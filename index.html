@@ -41,6 +41,21 @@
                 </div>
             </div>
 
+            <!-- Name Management Section -->
+            <div class="card name-management-section">
+                <h2>Manage Names</h2>
+                <div class="name-count-bar">
+                    <span id="name-count" class="name-count">0 names</span>
+                    <button id="delete-all-names" class="btn danger small"><i class="fas fa-trash"></i> Clear All</button>
+                </div>
+                <div class="name-list-container">
+                    <ul id="names-list" class="names-list">
+                        <!-- Names will be displayed here -->
+                        <li class="empty-state">No names added yet</li>
+                    </ul>
+                </div>
+            </div>
+
             <!-- Settings Section -->
             <div class="card settings-section">
                 <h2>Settings</h2>
@@ -96,6 +111,23 @@
                     <!-- Groups will be displayed here -->
                     <p class="empty-state">Generated groups will appear here</p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Name edit modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Name</h3>
+                <button id="close-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="edit-name-input" placeholder="Enter new name">
+            </div>
+            <div class="modal-footer">
+                <button id="save-edit" class="btn primary">Save</button>
+                <button id="cancel-edit" class="btn secondary">Cancel</button>
             </div>
         </div>
     </div>
