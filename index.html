@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Division App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Group Division App</h1>
+            <p>Create balanced groups with customized settings</p>
+        </header>
+
+        <div class="app-container">
+            <div class="card input-section">
+                <h2>Input Names</h2>
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="manual">Manual Entry</button>
+                    <button class="tab-btn" data-tab="file">Upload File</button>
+                </div>
+                
+                <div class="tab-content active" id="manual">
+                    <div class="input-group">
+                        <textarea id="names-input" placeholder="Enter names, one per line..."></textarea>
+                        <button id="add-names" class="btn primary"><i class="fas fa-plus"></i> Add Names</button>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="file">
+                    <div class="file-upload">
+                        <input type="file" id="file-input" accept=".txt,.csv">
+                        <label for="file-input">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Choose a file</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card settings-section">
+                <h2>Settings</h2>
+                <div class="setting-group">
+                    <label for="group-size">Group Size:</label>
+                    <input type="number" id="group-size" min="2" value="4">
+                </div>
+                
+                <div class="setting-group">
+                    <label>Exceptions (people who shouldn't be in the same group):</label>
+                    <div id="exceptions-container">
+                        <!-- Exception pairs will be added here -->
+                        <div class="exception-pair">
+                            <select class="exception-name1"><option value="">Select a name</option></select>
+                            <span>and</span>
+                            <select class="exception-name2"><option value="">Select a name</option></select>
+                            <button class="remove-exception"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                    <button id="add-exception" class="btn secondary"><i class="fas fa-plus"></i> Add Exception</button>
+                </div>
+                
+                <button id="generate-groups" class="btn primary"><i class="fas fa-random"></i> Generate Groups</button>
+            </div>
+
+            <div class="card results-section">
+                <h2>Generated Groups</h2>
+                <div id="groups-container">
+                    <!-- Groups will be displayed here -->
+                    <p class="empty-state">Generated groups will appear here</p>
+                </div>
+                
+                <div class="actions">
+                    <button id="download-groups" class="btn secondary" disabled><i class="fas fa-download"></i> Download</button>
+                    <button id="clear-groups" class="btn danger" disabled><i class="fas fa-trash"></i> Clear</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Group Division App &copy; 2023</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
