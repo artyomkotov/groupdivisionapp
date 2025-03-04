@@ -1,92 +1,48 @@
-/**
- * Group Division App - Main JavaScript
- * 
- * This file handles all the functionality of the Group Division App:
- * - Adding and managing names
- * - Handling user input from forms
- * - Implementing the group generation algorithm
- * - Creating and manipulating the UI elements
- * - Managing drag-and-drop interactions
- * - Validating user inputs
- */
-
-// Wait until the entire HTML document has loaded before running any code
 document.addEventListener('DOMContentLoaded', function() {
-    // ===============================================================
-    // ELEMENT REFERENCES - Getting all HTML elements we need to work with
-    // ===============================================================
+    // UI Elements
+    const namesInput = document.getElementById('names-input');
+    const fileInput = document.getElementById('file-input');
+    const addNamesBtn = document.getElementById('add-names');
+    const namesList = document.getElementById('names-list');
+    const nameCount = document.getElementById('name-count');
+    const deleteAllNamesBtn = document.getElementById('delete-all-names');
+    const groupSizeInput = document.getElementById('group-size');
+    const groupSizeSlider = document.getElementById('group-size-slider');
+    const groupSizeDisplay = document.getElementById('group-size-display');
+    const addExceptionBtn = document.getElementById('add-exception');
+    const addTogetherBtn = document.getElementById('add-together');
+    const generateGroupsBtn = document.getElementById('generate-groups');
+    const downloadGroupsBtn = document.getElementById('download-groups');
+    const clearGroupsBtn = document.getElementById('clear-groups');
+    const exceptionsContainer = document.getElementById('exceptions-container');
+    const togetherContainer = document.getElementById('together-container');
+    const groupsContainer = document.getElementById('groups-container');
+    const editModal = document.getElementById('edit-modal');
+    const editNameInput = document.getElementById('edit-name-input');
+    const saveEditBtn = document.getElementById('save-edit');
+    const cancelEditBtn = document.getElementById('cancel-edit');
+    const closeModalBtn = document.getElementById('close-modal');
     
-    // Input section elements
-    const namesInput = document.getElementById('names-input');           // Textarea for entering names
-    const fileInput = document.getElementById('file-input');             // File input for uploading names
-    const addNamesBtn = document.getElementById('add-names');            // Button to add names from textarea
-    
-    // Name management elements
-    const namesList = document.getElementById('names-list');             // List showing all added names
-    const nameCount = document.getElementById('name-count');             // Shows count of added names
-    const deleteAllNamesBtn = document.getElementById('delete-all-names'); // Button to delete all names
-    
-    // Settings section elements
-    const groupSizeInput = document.getElementById('group-size');         // Number input for group size
-    const groupSizeSlider = document.getElementById('group-size-slider'); // Slider for group size
-    const groupSizeDisplay = document.getElementById('group-size-display'); // Text display of current group size
-    const addExceptionBtn = document.getElementById('add-exception');     // Button to add exceptions
-    const addTogetherBtn = document.getElementById('add-together');       // Button to add must-be-together pairs
-    
-    // Results section elements
-    const generateGroupsBtn = document.getElementById('generate-groups'); // Button to generate groups
-    const downloadGroupsBtn = document.getElementById('download-groups'); // Button to download groups
-    const clearGroupsBtn = document.getElementById('clear-groups');       // Button to clear groups
-    const groupsContainer = document.getElementById('groups-container');  // Container for group results
-    
-    // Container elements for pairs
-    const exceptionsContainer = document.getElementById('exceptions-container'); // Container for exception pairs
-    const togetherContainer = document.getElementById('together-container');    // Container for together pairs
-    
-    // Modal elements for editing names
-    const editModal = document.getElementById('edit-modal');              // Modal dialog for editing names
-    const editNameInput = document.getElementById('edit-name-input');     // Input field in the edit modal
-    const saveEditBtn = document.getElementById('save-edit');             // Button to save edited name
-    const cancelEditBtn = document.getElementById('cancel-edit');         // Button to cancel editing
-    const closeModalBtn = document.getElementById('close-modal');         // X button to close modal
-    
-    // ===============================================================
-    // STATE VARIABLES - Data that changes throughout app usage
-    // ===============================================================
-    
-    // Array to store all names
+    // Store all names
     let allNames = [];
-    
-    // Tracks which name is being edited (by its index in the allNames array)
     let editingNameIndex = -1;
 
-    // ===============================================================
-    // MODAL FUNCTIONALITY - For editing names
-    // ===============================================================
-    
-    // Close the modal when close button is clicked
+    // Modal functionality
     closeModalBtn.addEventListener('click', closeModal);
-    // Close the modal when cancel button is clicked
     cancelEditBtn.addEventListener('click', closeModal);
     
-    // Save the edited name when save button is clicked
     saveEditBtn.addEventListener('click', function() {
-        // Get the new name from the input field and remove extra spaces
         const newName = editNameInput.value.trim();
-        
-        // Only proceed if there is a name and we know which name is being edited
         if (newName && editingNameIndex !== -1) {
-            // Store the old name for the notification message
-            const oldName = allNames[editingNameIndex];
-            
             // Update the name in our array
+            const oldName = allNames[editingNameIndex];
             allNames[editingNameIndex] = newName;
             
-            // Update the UI elements
-            updateNamesList();           // Refresh the names list
-            updateNameDropdowns(allNames); // Update dropdowns that use names
+            // Update the UI
+            updateNamesList();
+            updateNameDropdowns(allNames);
             
-            // Show a notification to confirm the change
+            // Show notification
             showNotification(`Changed "${oldName}" to "${newName}"`);
             
             // Close the modal
@@ -94,162 +50,103 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    /**
-     * Opens the edit modal for a specific name
-     * @param {string} name - The name being edited
-     * @param {number} index - The index of the name in the allNames array
-     */
     function openEditModal(name, index) {
-        // Set the input field to show the current name
         editNameInput.value = name;
-        
-        // Store which name we're editing for when the save button is clicked
         editingNameIndex = index;
-        
-        // Display the modal by adding the 'active' class
         editModal.classList.add('active');
-        
-        // Focus the cursor in the input field for immediate typing
         editNameInput.focus();
     }
     
-    /**
-     * Closes the edit modal and resets the editing state
-     */
     function closeModal() {
-        // Hide the modal by removing the 'active' class
         editModal.classList.remove('active');
-        
-        // Reset the editing index so we're not editing any name
         editingNameIndex = -1;
     }
 
-    // ===============================================================
-    // GROUP SIZE CONTROLS - Syncing slider and number input
-    // ===============================================================
-    
-    // Update number input when slider is moved
+    // Sync slider and number input
     groupSizeSlider.addEventListener('input', function() {
-        // Get the current slider value
         const value = this.value;
-        
-        // Update the number input to match the slider
         groupSizeInput.value = value;
-        
-        // Update the display text to show the current value
         groupSizeDisplay.textContent = value;
     });
     
-    // Update slider when number input is changed
     groupSizeInput.addEventListener('input', function() {
-        // Parse the input to a number (inputs return strings by default)
         let value = parseInt(this.value);
+        // Ensure value is within range
+        if (value < 2) value = 2;
+        if (value > 20) value = 20;
         
-        // Enforce minimum and maximum values
-        if (value < 2) value = 2;  // Min group size is 2
-        if (value > 20) value = 20; // Max group size is 20
-        
-        // Update the slider if the value is within its range (the slider only goes to 10)
+        // Update slider if within its range
         if (value <= 10) {
             groupSizeSlider.value = value;
         }
         
-        // Always update the display text
         groupSizeDisplay.textContent = value;
     });
     
-    // ===============================================================
-    // TAB FUNCTIONALITY - Switching between manual entry and file upload
-    // ===============================================================
-    
-    // Get all tab buttons and content sections
+    // Tab functionality
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
     
-    // Add click event listeners to each tab button
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            // Remove active class from all tabs (deactivating them)
+            // Remove active class from all tabs
             tabBtns.forEach(b => b.classList.remove('active'));
             tabContents.forEach(c => c.classList.remove('active'));
             
-            // Add active class to the clicked tab (activating it)
+            // Add active class to selected tab
             btn.classList.add('active');
-            
-            // Get the ID of the content to show from the data-tab attribute
             const tabId = btn.dataset.tab;
-            
-            // Activate the corresponding content section
             document.getElementById(tabId).classList.add('active');
         });
     });
     
-    // ===============================================================
-    // FILE INPUT HANDLING - Processing uploaded name files
-    // ===============================================================
-    
+    // File input handling
     fileInput.addEventListener('change', function() {
-        // Get the selected file (if any)
         const file = this.files[0];
-        if (!file) return;  // Exit if no file selected
+        if (!file) return;
         
-        // Get the file name for UI feedback
         const fileName = file.name;
-        
-        // Update the file label to show the selected file
         const fileLabel = this.nextElementSibling.querySelector('span');
         fileLabel.textContent = fileName || 'Choose a file';
         
-        // Create a FileReader to read the file contents
         const reader = new FileReader();
         
-        // Set up what happens when the file is loaded
         reader.onload = function(e) {
-            // Get the file content as text
             const content = e.target.result;
             let names = [];
             
-            // Process the file based on its extension
+            // Process based on file extension
             if (fileName.toLowerCase().endsWith('.csv')) {
-                // For CSV files: split by lines, then by commas
+                // Process CSV - split by newlines, then by commas
                 names = content.trim().split(/\r?\n/).flatMap(line => 
                     line.split(',').map(name => name.trim()).filter(name => name)
                 );
             } else {
-                // For TXT files: split by lines
+                // Process TXT - split by newlines
                 names = content.trim().split(/\r?\n/).map(name => name.trim()).filter(name => name);
             }
             
-            // Add the names if any were found
+            // Add the names
             if (names.length > 0) {
-                saveNames(names);               // Save to our array
-                updateNamesList();              // Update the names list
-                updateNameDropdowns(allNames);  // Update selection dropdowns
-                
-                // Show notification with how many names were added
+                saveNames(names);
+                updateNamesList();
+                updateNameDropdowns(allNames);
+                // Show notification
                 showNotification(`Added ${names.length} names from file`);
             }
         };
         
-        // Start reading the file as text
         reader.readAsText(file);
     });
     
-    // ===============================================================
-    // NAME MANAGEMENT FUNCTIONALITY - Displaying and editing names
-    // ===============================================================
-    
-    /**
-     * Updates the list of names shown in the UI
-     */
+    // Name management functionality
     function updateNamesList() {
-        // Clear the current list of names
+        // Clear the current list
         namesList.innerHTML = '';
         
         // Update the count display
         nameCount.textContent = `${allNames.length} names`;
         
-        // If there are no names, show the empty state message
         if (allNames.length === 0) {
             const emptyItem = document.createElement('li');
             emptyItem.className = 'empty-state';
@@ -258,202 +155,149 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Add each name to the list with edit and delete buttons
+        // Add each name to the list
         allNames.forEach((name, index) => {
-            // Create a list item for the name
             const li = document.createElement('li');
             
-            // Create a span for the name text
             const nameText = document.createElement('span');
             nameText.className = 'name-text';
             nameText.textContent = name;
             
-            // Create a container for the action buttons
             const actions = document.createElement('div');
             actions.className = 'name-actions';
             
-            // Create edit button
             const editBtn = document.createElement('button');
             editBtn.className = 'edit-name';
             editBtn.innerHTML = '<i class="fas fa-edit"></i>';
             editBtn.title = 'Edit name';
             editBtn.addEventListener('click', () => openEditModal(name, index));
             
-            // Create delete button
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-name';
-            deleteBtn.innerHTML = '<i class="fas fa-trash'></i>';
+            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
             deleteBtn.title = 'Delete name';
             deleteBtn.addEventListener('click', () => deleteName(index));
             
-            // Add both buttons to the actions container
             actions.appendChild(editBtn);
             actions.appendChild(deleteBtn);
             
-            // Add the name text and actions to the list item
             li.appendChild(nameText);
             li.appendChild(actions);
             
-            // Add the list item to the names list
             namesList.appendChild(li);
         });
     }
     
-    /**
-     * Deletes a name from the array and updates the UI
-     * @param {number} index - The index of the name to delete
-     */
     function deleteName(index) {
-        // Get the name for the notification message
         const name = allNames[index];
-        
-        // Remove the name from our array
         allNames.splice(index, 1);
-        
-        // Update the UI
         updateNamesList();
         updateNameDropdowns(allNames);
-        
-        // Show notification
         showNotification(`Removed "${name}"`);
     }
     
-    // Setup the Delete All button
     deleteAllNamesBtn.addEventListener('click', function() {
-        // Don't do anything if there are no names
         if (allNames.length === 0) return;
         
-        // Ask for confirmation before deleting all names
         if (confirm(`Are you sure you want to delete all ${allNames.length} names?`)) {
-            // Clear the names array
             allNames = [];
-            
-            // Update the UI
             updateNamesList();
             updateNameDropdowns(allNames);
-            
-            // Show notification
             showNotification('All names cleared');
         }
     });
-
-    // ===============================================================
-    // EXCEPTION AND TOGETHER PAIRS - UI Management
-    // ===============================================================
     
-    // Add a new exception pair when the button is clicked
+    // Add exceptions UI
     addExceptionBtn.addEventListener('click', function() {
-        // Clone the first exception pair to create a new one
         const exceptionPair = document.querySelector('.exception-pair').cloneNode(true);
         const removeBtn = exceptionPair.querySelector('.remove-exception');
         
-        // Reset the selections in the cloned pair
+        // Reset selections in the cloned pair
         exceptionPair.querySelectorAll('select').forEach(select => {
             select.value = '';
-            // Fill the dropdowns with current names
+            // Re-populate with current names
             updateSingleDropdown(select, allNames);
         });
         
-        // Add functionality to the remove button
+        // Add remove functionality
         removeBtn.addEventListener('click', function() {
-            exceptionPair.remove(); // Remove this pair when clicked
+            exceptionPair.remove();
         });
         
-        // Add the new pair to the container
         exceptionsContainer.appendChild(exceptionPair);
     });
     
-    // Add a new "must be together" pair when the button is clicked
+    // Add "must be together" UI
     addTogetherBtn.addEventListener('click', function() {
-        // Clone the first together pair to create a new one
         const togetherPair = document.querySelector('.together-pair').cloneNode(true);
         const removeBtn = togetherPair.querySelector('.remove-together');
         
-        // Reset the selections in the cloned pair
+        // Reset selections in the cloned pair
         togetherPair.querySelectorAll('select').forEach(select => {
             select.value = '';
-            // Fill the dropdowns with current names
+            // Re-populate with current names
             updateSingleDropdown(select, allNames);
         });
         
-        // Add functionality to the remove button
+        // Add remove functionality
         removeBtn.addEventListener('click', function() {
-            togetherPair.remove(); // Remove this pair when clicked
+            togetherPair.remove();
         });
         
-        // Add the new pair to the container
         togetherContainer.appendChild(togetherPair);
     });
     
-    // Handle removing the first exception pair
+    // Remove exception handler for initial pair
     document.querySelector('.remove-exception').addEventListener('click', function() {
-        // Only allow removal if there's more than one pair
         if (exceptionsContainer.querySelectorAll('.exception-pair').length > 1) {
             this.closest('.exception-pair').remove();
         }
     });
     
-    // Handle removing the first together pair
+    // Remove together handler for initial pair
     document.querySelector('.remove-together').addEventListener('click', function() {
-        // Only allow removal if there's more than one pair
         if (togetherContainer.querySelectorAll('.together-pair').length > 1) {
             this.closest('.together-pair').remove();
         }
     });
-
-    // ===============================================================
-    // NAME MANAGEMENT - Adding and storing names
-    // ===============================================================
     
-    /**
-     * Saves names to our array, avoiding duplicates
-     * @param {string[]} names - Array of names to save
-     */
+    // Save names to our array
     function saveNames(names) {
-        // Add each new unique name to the list
+        // Add new unique names to the list
         names.forEach(name => {
-            // Only add if the name doesn't already exist
             if (!allNames.includes(name)) {
                 allNames.push(name);
             }
         });
         
-        // Sort alphabetically for easier reference
+        // Sort alphabetically
         allNames.sort();
     }
     
-    /**
-     * Updates all name dropdowns with current names
-     * @param {string[]} names - Array of names to add to dropdowns
-     */
+    // Update name dropdowns for both exceptions and together pairs
     function updateNameDropdowns(names) {
-        // Update all exception select dropdowns
+        // Update all exception selects
         document.querySelectorAll('.exception-name1, .exception-name2').forEach(select => {
             updateSingleDropdown(select, names);
         });
         
-        // Update all together select dropdowns
+        // Update all together selects
         document.querySelectorAll('.together-name1, .together-name2').forEach(select => {
             updateSingleDropdown(select, names);
         });
     }
     
-    /**
-     * Updates a single dropdown with the list of names
-     * @param {HTMLSelectElement} select - The select element to update
-     * @param {string[]} names - Array of names to add as options
-     * @param {string} currentValue - Optional current value to preserve
-     */
+    // Update a single dropdown with names
     function updateSingleDropdown(select, names, currentValue = '') {
-        // Save the current selection if there is one
+        // Save current selection if there is one
         const currentSelection = currentValue || select.value;
         
-        // Clear existing options except the placeholder
+        // Clear options except the placeholder
         while (select.options.length > 1) {
             select.remove(1);
         }
         
-        // Add each name as a new option
+        // Add new options
         names.forEach(name => {
             const option = document.createElement('option');
             option.value = name;
@@ -461,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
             select.appendChild(option);
         });
         
-        // Restore the previous selection if it still exists
+        // Restore selection if it still exists
         if (currentSelection && names.includes(currentSelection)) {
             select.value = currentSelection;
         }
