@@ -1,28 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Group Division App</title>
+    <!-- Meta tags provide information about the document that isn't displayed on the page but is used by browsers and search engines -->
+    <meta charset="UTF-8"> <!-- Specifies the character encoding (UTF-8 supports many languages) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Makes the website responsive to different screen sizes -->
+    <title>Group Division App</title> <!-- Sets the title shown in the browser tab -->
+    <!-- Link to external CSS file (styles.css) for styling the page -->
     <link rel="stylesheet" href="styles.css">
+    <!-- Link to Font Awesome icon library for using icons in the app -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <!-- Main container for the entire app -->
     <div class="container">
+        <!-- Header section containing the app title and description -->
         <header>
             <h1>Group Division App</h1>
             <p>Create balanced groups with customized settings</p>
         </header>
 
+        <!-- Main app container that holds all functional sections -->
         <div class="app-container">
-            <!-- Input Section -->
+            <!-- INPUT SECTION: Where users enter names -->
             <div class="card input-section">
                 <h2>Input Names</h2>
+                <!-- Tab navigation for different input methods -->
                 <div class="tabs">
                     <button class="tab-btn active" data-tab="manual">Manual Entry</button>
                     <button class="tab-btn" data-tab="file">Upload File</button>
                 </div>
                 
+                <!-- Manual entry tab content - allows typing names directly -->
                 <div class="tab-content active" id="manual">
                     <div class="input-group">
                         <textarea id="names-input" placeholder="Enter names, one per line..."></textarea>
@@ -30,6 +38,7 @@
                     </div>
                 </div>
                 
+                <!-- File upload tab content - allows importing names from a file -->
                 <div class="tab-content" id="file">
                     <div class="file-upload">
                         <input type="file" id="file-input" accept=".txt,.csv">
@@ -41,24 +50,27 @@
                 </div>
             </div>
 
-            <!-- Name Management Section -->
+            <!-- NAME MANAGEMENT SECTION: Shows all added names and allows editing/deleting them -->
             <div class="card name-management-section">
                 <h2>Manage Names</h2>
+                <!-- Bar showing name count and clear all button -->
                 <div class="name-count-bar">
                     <span id="name-count" class="name-count">0 names</span>
                     <button id="delete-all-names" class="btn danger small"><i class="fas fa-trash"></i> Clear All</button>
                 </div>
+                <!-- Container for the list of names -->
                 <div class="name-list-container">
                     <ul id="names-list" class="names-list">
-                        <!-- Names will be displayed here -->
+                        <!-- Names will be added here by JavaScript -->
                         <li class="empty-state">No names added yet</li>
                     </ul>
                 </div>
             </div>
 
-            <!-- Settings Section -->
+            <!-- SETTINGS SECTION: Controls for group formation -->
             <div class="card settings-section">
                 <h2>Settings</h2>
+                <!-- Group size setting with slider and number input -->
                 <div class="setting-group">
                     <label for="group-size">Group Size: <span id="group-size-display">4</span></label>
                     <div class="slider-container">
@@ -67,10 +79,11 @@
                     </div>
                 </div>
                 
+                <!-- Exceptions settings - pairs that shouldn't be in the same group -->
                 <div class="setting-group">
                     <label>Exceptions (people who shouldn't be in the same group):</label>
                     <div id="exceptions-container">
-                        <!-- Exception pairs will be added here -->
+                        <!-- Default exception pair - additional pairs will be added here -->
                         <div class="exception-pair">
                             <select class="exception-name1"><option value="">Select a name</option></select>
                             <span>and</span>
@@ -81,10 +94,11 @@
                     <button id="add-exception" class="btn secondary"><i class="fas fa-plus"></i> Add Exception</button>
                 </div>
                 
+                <!-- Must be together settings - pairs that must be in the same group -->
                 <div class="setting-group">
                     <label>Must Be Together (people who must be in the same group):</label>
                     <div id="together-container">
-                        <!-- Together pairs will be added here -->
+                        <!-- Default together pair - additional pairs will be added here -->
                         <div class="together-pair">
                             <select class="together-name1"><option value="">Select a name</option></select>
                             <span>and</span>
@@ -95,11 +109,13 @@
                     <button id="add-together" class="btn secondary"><i class="fas fa-plus"></i> Add Pair</button>
                 </div>
                 
+                <!-- Button to generate groups based on the settings -->
                 <button id="generate-groups" class="btn primary"><i class="fas fa-random"></i> Generate Groups</button>
             </div>
 
-            <!-- Results Section - Now full width below -->
+            <!-- RESULTS SECTION: Shows generated groups and allows modifications -->
             <div class="card results-section">
+                <!-- Header with title and action buttons -->
                 <div class="results-header">
                     <h2>Generated Groups</h2>
                     <div class="actions">
@@ -107,15 +123,16 @@
                         <button id="clear-groups" class="btn danger" disabled><i class="fas fa-trash"></i> Clear</button>
                     </div>
                 </div>
+                <!-- Container where group cards will be displayed -->
                 <div id="groups-container">
-                    <!-- Groups will be displayed here -->
+                    <!-- Groups will be added here by JavaScript -->
                     <p class="empty-state">Generated groups will appear here</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Name edit modal -->
+    <!-- Modal dialog for editing names -->
     <div id="edit-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -132,10 +149,12 @@
         </div>
     </div>
 
+    <!-- Footer section -->
     <footer>
         <p>Group Division App &copy; 2025</p>
     </footer>
 
+    <!-- Link to JavaScript file that handles all the app's functionality -->
     <script src="script.js"></script>
 </body>
 </html>

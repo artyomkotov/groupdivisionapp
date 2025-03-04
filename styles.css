@@ -1,43 +1,64 @@
+/* 
+ * CSS VARIABLES
+ * These define colors and properties that are used throughout the application.
+ * Using variables makes it easier to maintain a consistent look and feel.
+ */
 :root {
     /* Dark theme colors */
-    --primary-color: #3498db;
-    --secondary-color: #2ecc71;
-    --danger-color: #e74c3c;
-    --bg-dark: #121212;
-    --bg-card: #1e1e1e;
-    --text-primary: #ffffff;
-    --text-secondary: #b0b0b0;
-    --border-color: #333333;
-    --hover-color: #2a2a2a;
-    --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    --border-radius: 8px;
-    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    --primary-color: #3498db;    /* Blue - used for primary elements and actions */
+    --secondary-color: #2ecc71;  /* Green - used for secondary actions */
+    --danger-color: #e74c3c;     /* Red - used for destructive actions like delete */
+    --bg-dark: #121212;          /* Dark background for the body */
+    --bg-card: #1e1e1e;          /* Slightly lighter background for cards */
+    --text-primary: #ffffff;     /* White text for good contrast on dark backgrounds */
+    --text-secondary: #b0b0b0;   /* Light gray text for less important information */
+    --border-color: #333333;     /* Border color for separation between elements */
+    --hover-color: #2a2a2a;      /* Color used when hovering over elements */
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);  /* Shadow effect for depth */
+    --border-radius: 8px;        /* Rounded corners for elements */
+    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);  /* Smooth animation effect */
 }
 
+/* 
+ * RESET STYLES
+ * Removes default margins, paddings and ensures box sizing includes borders
+ */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    margin: 0;             /* Remove default margin from all elements */
+    padding: 0;            /* Remove default padding from all elements */
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
 }
 
+/*
+ * BODY STYLES
+ * Base styling for the entire document
+ */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    color: var(--text-primary);
-    background-color: var(--bg-dark);
-    padding: 20px;
-    transition: var(--transition);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  /* Font family stack */
+    line-height: 1.6;       /* Line spacing for better readability */
+    color: var(--text-primary);  /* Text color using the CSS variable */
+    background-color: var(--bg-dark);  /* Dark background color */
+    padding: 20px;          /* Space around the entire body content */
+    transition: var(--transition);  /* Smooth transitions for changes */
 }
 
+/* 
+ * CONTAINER STYLES
+ * Main wrapper that centers content and sets maximum width 
+ */
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 1200px;    /* Prevents content from stretching too wide on large screens */
+    margin: 0 auto;       /* Centers the container horizontally (0 top/bottom, auto left/right) */
 }
 
+/* 
+ * HEADER STYLES
+ * Styling for the app title and description
+ */
 header {
-    text-align: center;
-    margin-bottom: 30px;
-    animation: fadeInDown 0.8s ease-out;
+    text-align: center;   /* Centers the header text */
+    margin-bottom: 30px;  /* Space below the header */
+    animation: fadeInDown 0.8s ease-out;  /* Animation effect when page loads */
 }
 
 header h1 {
@@ -56,54 +77,58 @@ header p {
     gap: 20px;
 }
 
+/* Tablet layout - two columns */
 @media (min-width: 768px) {
     .app-container {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr);  /* Two equal columns */
     }
     
+    /* Specific positioning for each section on tablet screens */
     .name-management-section {
-        grid-row: 2;
-        grid-column: 1;
+        grid-row: 2;       /* Position in second row */
+        grid-column: 1;    /* Position in first column */
     }
     
     .settings-section {
-        grid-row: 2;
-        grid-column: 2;
+        grid-row: 2;       /* Position in second row */
+        grid-column: 2;    /* Position in second column */
     }
     
     .results-section {
-        grid-column: 1 / span 2;
-        grid-row: 3;
+        grid-column: 1 / span 2;  /* Stretch across both columns */
+        grid-row: 3;              /* Position in third row */
     }
 }
 
+/* Desktop layout - three columns */
 @media (min-width: 992px) {
     .app-container {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, 1fr);  /* Three equal columns */
     }
     
+    /* Specific positioning for each section on desktop screens */
     .input-section {
-        grid-column: 1;
-        grid-row: 1;
-        animation: fadeInLeft 0.8s ease-out;
+        grid-column: 1;      /* First column */
+        grid-row: 1;         /* First row */
+        animation: fadeInLeft 0.8s ease-out;  /* Animation from left */
     }
     
     .name-management-section {
-        grid-column: 2;
-        grid-row: 1;
-        animation: fadeIn 0.8s ease-out;
+        grid-column: 2;      /* Second column */
+        grid-row: 1;         /* First row */
+        animation: fadeIn 0.8s ease-out;  /* Fade in animation */
     }
     
     .settings-section {
-        grid-column: 3;
-        grid-row: 1;
-        animation: fadeInRight 0.8s ease-out;
+        grid-column: 3;      /* Third column */
+        grid-row: 1;         /* First row */
+        animation: fadeInRight 0.8s ease-out;  /* Animation from right */
     }
     
     .results-section {
-        grid-column: 1 / span 3;
-        grid-row: 2;
-        animation: fadeInUp 0.8s ease-out;
+        grid-column: 1 / span 3;  /* Stretch across all three columns */
+        grid-row: 2;              /* Second row */
+        animation: fadeInUp 0.8s ease-out;  /* Animation from bottom */
     }
 }
 
