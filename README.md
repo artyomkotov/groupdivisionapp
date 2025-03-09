@@ -1,6 +1,6 @@
-# Name Randomizer App
+# Group Randomizer App
 
-A flexible and customizable **Name Randomizer App** designed to help organize people into randomized groups with a range of advanced features. Built to handle various scenarios like group size adjustment, special person pairings, and manual editing through an intuitive web interface.
+A flexible and customizable **Group Randomizer App** designed to help organize people into randomized groups with a range of advanced features. Built to handle various scenarios like group size adjustment, special person pairings, and manual editing through an intuitive web interface.
 
 ## Features
 
