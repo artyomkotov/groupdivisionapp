@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Group Division App</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -68,7 +68,7 @@
                 </div>
                 
                 <div class="setting-group">
-                    <label>Exceptions (people who shouldn't be in the same group):</label>
+                    <label>Must not be together:</label>
                     <div id="exceptions-container">
                         <!-- Exception pairs will be added here -->
                         <div class="exception-pair">
@@ -82,7 +82,7 @@
                 </div>
                 
                 <div class="setting-group">
-                    <label>Must Be Together (people who must be in the same group):</label>
+                    <label>Must Be Together:</label>
                     <div id="together-container">
                         <!-- Together pairs will be added here -->
                         <div class="together-pair">
@@ -136,6 +136,12 @@
         <p>Group Division App &copy; 2025</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/nameManager.js"></script>
+    <script src="js/groupGenerator.js"></script>
+    <script src="js/dragDrop.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
