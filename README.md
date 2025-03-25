@@ -26,7 +26,7 @@ A flexible and customizable **Group Randomizer App** designed to help organize p
 ## Technology Stack
 
 - Backend: JavaScript
-- Frontend: Plain HTML,CSS and JavaScript
+- Frontend: Plain HTML, CSS and JavaScript
 - File Handling: Supports common formats like `.txt` and ˋ.csvˋ for import/export.
 
 ## Installation 
